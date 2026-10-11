@@ -167,3 +167,43 @@ demon creators do.
 
 Official levels additionally strip the first 13 base64 chars
 (`H4sIAAAAAAAAA`), which is irrelevant for custom-level export.
+
+---
+
+## 6. Shaders - a capability discovered after the first pass
+
+**VERIFIED (upgraded finding).** The first survey under-sold what GD 2.2 can
+do. `data/object_table.csv` contains a whole `ShaderGameObject` family
+(editor tab 13), i.e. **real GPU post-processing triggers**:
+
+| Shader | id | Shader | id |
+|---|---|---|---|
+| Shader options | 2904 | Pixelate | 2912 |
+| Shock wave | 2905 | Lens circle | 2913 |
+| Shock line | 2907 | Radial blur | 2914 |
+| Glitch | 2909 | Motion blur | 2915 |
+| Chromatic aberration | 2910 | Bulge | 2916 |
+| Chromatic glitch | 2911 | Pinch | 2917 |
+| Grayscale / Sepia | 2919 / 2920 | Invert / Hue | 2921 / 2922 |
+| Edit colour | 2923 | Split screen | 2924 |
+
+Their properties are fully documented in `data/prop_table.csv`
+(`trigger.shader.*`), including strength (176), speed (175), size (179/512),
+centre group (51), tint channel (71) and fade time (10).
+
+**Consequence:** the level can use genuine screen-space distortion -
+`pinch`/`bulge`/`lens_circle`/`radial_blur` create real perspective warping,
+and `glitch`/`chromatic_glitch`/`pixelate` create real digital artefacts. The
+"3D transitions" are therefore not purely fake 2.5D: they combine 2D object
+choreography with real post-processing.
+
+**Text is also available** (object id 914, `TextGameObject`), with the string
+stored base64-encoded in property 31. This is what makes a real in-level
+endscreen possible (see `effects.endscreen`).
+
+## 7. The hard limit that remains
+
+GD levels cannot contain **custom textures or sprites**. The Cline mascot is
+therefore composed from existing GD objects (circles, rods, blocks) and is an
+original interpretation, not a reproduction of any supplied logo. This is
+documented in `src/clinecircles/decoration/robot.py`.
