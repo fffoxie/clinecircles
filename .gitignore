@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+
+# Build output (regeneratable artifacts)
+out/*.gmd
+out/*.txt
+out/*.png
+out/*.json
+
+# Node (preview tool)
+node_modules/
+
+# OS
+.DS_Store
