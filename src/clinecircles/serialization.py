@@ -99,7 +99,9 @@ def parse_level_string(s: str) -> Level:
 
 
 def compress_level_string(s: str) -> str:
-    return base64.urlsafe_b64encode(gzip.compress(s.encode())).decode()
+    """gzip + base64url, with mtime pinned so builds are byte-reproducible."""
+    return base64.urlsafe_b64encode(
+        gzip.compress(s.encode(), mtime=0)).decode()
 
 
 def decompress_level_string(s: str) -> str:

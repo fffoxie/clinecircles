@@ -52,6 +52,31 @@ def test_groups_separator():
     assert o.groups() == [2, 3]
 
 
+
+
+def test_build_is_deterministic():
+    """Rebuilding must produce byte-identical level data."""
+    from clinecircles.layout import build_level
+    from clinecircles.serialization import build_gmd
+    a = build_gmd(build_level().level)
+    b = build_gmd(build_level().level)
+    assert a == b, "build output is not deterministic"
+
+
+def test_full_pipeline_validates():
+    """The whole pipeline (layout + decoration + effects) must validate."""
+    from clinecircles.decoration import decorate
+    from clinecircles.effects import apply_effects
+    from clinecircles.layout import build_level
+    from clinecircles.validate import validate_level
+    res = build_level()
+    decorate(res)
+    apply_effects(res)
+    rep = validate_level(res.level)
+    assert rep.ok, rep.render()
+    assert len(res.level.objects) > 1500
+
+
 if __name__ == "__main__":
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_")]
     for fn in fns:
