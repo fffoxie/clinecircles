@@ -1,7 +1,9 @@
 """CLI: build, validate and export the CLINE CIRCLES level.
 
-    python -m clinecircles build     # generate out/CLINE CIRCLES.gmd + info
-    python -m clinecircles info      # print the section/timing plan only
+    python -m clinecircles build            # full level (layout+deco+effects)
+    python -m clinecircles build --layout-only
+    python -m clinecircles build --no-effects
+    python -m clinecircles info             # timing/section plan only
 """
 
 from __future__ import annotations
@@ -25,11 +27,8 @@ def cmd_info(args: argparse.Namespace) -> int:
     print(f"CLINE CIRCLES  |  {t.title} - {t.artist} (NG {t.song_id})")
     print(f"  {t.bpm} BPM, beat {t.beat_s:.5f}s, bar {t.bar_s:.5f}s, "
           f"phase {t.phase_s:.4f}s")
-    print(f"  length: {res.length_units:.0f} units = "
-          f"{res.length_blocks:.1f} blocks "
-          f"({res.timeline.x_at_bar(44) and ''}"
-          f"{t.time_at_bar(44):.2f}s)")
-    print("  sections:")
+    print(f"  length: {res.length_units:.0f} units = {res.length_blocks:.1f} "
+          f"blocks ({t.time_at_bar(44):.2f}s)")
     for sec in res.timeline.segments:
         print(f"    speed {sec.speed.name} from bar {sec.start_bar}")
     for name, (x0, x1) in res.section_x.items():
@@ -42,6 +41,23 @@ def cmd_build(args: argparse.Namespace) -> int:
     os.makedirs(OUT_DIR, exist_ok=True)
     res = build_level()
     level = res.level
+    deco_stats = None
+    fx_stats = None
+
+    if not args.layout_only:
+        from .decoration import decorate
+        deco_stats = decorate(res)
+        print(f"decoration: +{deco_stats.objects} objects "
+              f"{deco_stats.per_section}")
+        if not args.no_effects:
+            from .effects import apply_effects
+            fx_stats = apply_effects(res)
+            print(f"effects: +{fx_stats.objects} objects {fx_stats.summary}")
+
+    if args.optimize:
+        from .optimize import optimize
+        opt = optimize(res)
+        print(f"optimize: -{opt.removed} objects {opt.detail}")
 
     rep = validate_level(level)
     print(f"CLINE CIRCLES  |  {len(level.objects)} objects")
@@ -66,6 +82,11 @@ def cmd_build(args: argparse.Namespace) -> int:
         "duration_s": round(res.track.time_at_bar(44), 3),
         "sections": {k: [round(v[0], 2), round(v[1], 2)]
                      for k, v in res.section_x.items()},
+        "decoration": None if deco_stats is None else {
+            "objects": deco_stats.objects,
+            "per_section": deco_stats.per_section},
+        "effects": None if fx_stats is None else {
+            "objects": fx_stats.objects, "summary": fx_stats.summary},
         "validation": {"ok": rep.ok, "errors": rep.errors,
                        "warnings": rep.warnings},
     }
@@ -81,6 +102,12 @@ def cmd_build(args: argparse.Namespace) -> int:
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="clinecircles")
     ap.add_argument("command", choices=["build", "info"])
+    ap.add_argument("--layout-only", action="store_true",
+                    help="skip decoration and effects (Phase A only)")
+    ap.add_argument("--no-effects", action="store_true",
+                    help="skip Phase D effects")
+    ap.add_argument("--optimize", action="store_true",
+                    help="run the performance pass")
     args = ap.parse_args(argv)
     return {"build": cmd_build, "info": cmd_info}[args.command](args)
 

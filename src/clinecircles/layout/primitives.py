@@ -55,31 +55,44 @@ class Builder:
     solids: list[Solid] = field(default_factory=list)
     hazards: list[Hazard] = field(default_factory=list)
     markers: dict[str, float] = field(default_factory=dict)
+    _cells: set = field(default_factory=set)
+
+    def _seen(self, obj: int, x: float, y: float) -> bool:
+        """True if an identical object already occupies this cell."""
+        cell = (int(obj), round(x * 100), round(y * 100))
+        if cell in self._cells:
+            return True
+        self._cells.add(cell)
+        return False
 
     # ------------------------------------------------------------------
     def solid(self, x: float, y: float, w: float = BLOCK, h: float = BLOCK,
               color: int | None = None, obj: int = gd.Obj.BLOCK_SQUARE,
               groups: tuple[int, ...] = ()) -> LevelObject:
         """Place a solid block centred at (x, y)."""
+        self.solids.append(Solid(x - w / 2, x + w / 2, y - h / 2, y + h / 2))
+        if self._seen(obj, x, y):
+            return LevelObject(int(obj), x, y)
         o = LevelObject(obj, x, y)
         if color is not None:
             o.color(color)
         if groups:
             o.add_group(*groups)
         self.level.add(o)
-        self.solids.append(Solid(x - w / 2, x + w / 2, y - h / 2, y + h / 2))
         return o
 
     def hazard(self, x: float, y: float, w: float = BLOCK, h: float = BLOCK,
                obj: int = gd.Obj.SPIKE, color: int | None = None,
                groups: tuple[int, ...] = ()) -> LevelObject:
+        self.hazards.append(Hazard(x - w / 2, x + w / 2, y - h / 2, y + h / 2))
+        if self._seen(obj, x, y):
+            return LevelObject(int(obj), x, y)
         o = LevelObject(obj, x, y)
         if color is not None:
             o.color(color)
         if groups:
             o.add_group(*groups)
         self.level.add(o)
-        self.hazards.append(Hazard(x - w / 2, x + w / 2, y - h / 2, y + h / 2))
         return o
 
     # ------------------------------------------------------------------
