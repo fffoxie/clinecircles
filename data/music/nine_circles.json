@@ -1,0 +1,50 @@
+{
+  "track": {
+    "title": "Nine Circles",
+    "artist": "NIGHTkilla (Rukkus)",
+    "newgrounds_id": 533927,
+    "source_url": "https://www.newgrounds.com/audio/listen/533927",
+    "full_length_s": 203.285,
+    "bpm": 174.0,
+    "key": "D minor",
+    "genre": "drumstep / dubstep"
+  },
+  "permission": {
+    "status": "USED-WITH-EVIDENCE",
+    "evidence": [
+      "This is the audio of 'Nine Circles' (level id 4284013), the second most downloaded custom level in Geometry Dash history, and of thousands of rated remakes (Sonic Wave, Jawbreaker, Poltergeist, Fairydust).",
+      "Song id 533927 is referenced as the level's music id by the Official Geometry Dash Wiki.",
+      "Newgrounds audio ids used by long-standing rated levels are whitelisted for in-game use."
+    ],
+    "not_verified": [
+      "The GD song-info API (boomlings.com/database/getGJSongInfo.php) is blocked from this environment by Cloudflare (HTTP 403 / 'error code: 1005'), so whitelist status could not be re-confirmed programmatically.",
+      "Final confirmation must be done in the GD editor: search song id 533927 and check it loads."
+    ],
+    "attribution": "Music: 'Nine Circles' by NIGHTkilla / Rukkus, via Newgrounds (id 533927). All rights belong to the artist."
+  },
+  "analysis": {
+    "method": "tools/analyze_track.py + comb-filter phase search and kick-band onset detection on the decoded audio",
+    "verified": true,
+    "beat_period_s": 0.34483,
+    "bar_s": 1.37931,
+    "phase_t0_s": 0.0879,
+    "notes": "174.00 BPM was selected by comb filtering over 160-190 BPM; it matches an independent source (songbpm) exactly."
+  },
+  "structure": [
+    {"name": "intro",       "start_bar": 0,  "end_bar": 3,  "start_s": 0.0,   "end_s": 4.226,  "note": "riser, near silence"},
+    {"name": "impact",      "start_bar": 3,  "end_bar": 4,  "start_s": 4.226, "end_s": 5.605,  "note": "first kick hit, -44dB -> -9dB"},
+    {"name": "buildup",     "start_bar": 4,  "end_bar": 12, "start_s": 5.605, "end_s": 16.640, "note": "steady ~-16dB verse"},
+    {"name": "drop1",       "start_bar": 12, "end_bar": 20, "start_s": 16.640,"end_s": 27.672, "note": "first drop, kick band +7dB"},
+    {"name": "breakdown",   "start_bar": 20, "end_bar": 27, "start_s": 27.672,"end_s": 37.329, "note": "quietest mid section, -14dB"},
+    {"name": "drop2",       "start_bar": 27, "end_bar": 44, "start_s": 37.329,"end_s": 60.777, "note": "main drop / climax, sustained ~-8dB"},
+    {"name": "post",        "start_bar": 44, "end_bar": 67, "start_s": 60.777,"end_s": 92.5,   "note": "drop continues, not used by the level"}
+  ],
+  "sync_points": [
+    {"label": "first_kick",     "s": 4.226,  "bar": 3,    "beat": 12},
+    {"label": "drop1",          "s": 16.640, "bar": 12,   "beat": 48},
+    {"label": "breakdown",      "s": 27.672, "bar": 20,   "beat": 80},
+    {"label": "breakdown_2",    "s": 34.571, "bar": 25,   "beat": 100},
+    {"label": "drop2",          "s": 37.329, "bar": 27,   "beat": 108},
+    {"label": "level_end",      "s": 60.777, "bar": 44,   "beat": 176}
+  ]
+}
