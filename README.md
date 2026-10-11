@@ -1,4 +1,4 @@
-# CLINE CIRCLES
+# ANTICLINE CIRCLES
 
 An unofficial, AI-assisted **Geometry Dash level generator** that produces a
 real, importable `.gmd` level file — not a browser imitation.
