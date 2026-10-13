@@ -2,51 +2,34 @@
 
 ## Done
 
-### Phase 0 - verification (docs/VERIFICATION.md)
-- Level string, `.gmd` container and gzip/base64 encoding verified against real
-  GD files shipped in gmdkit.
-- Object ids, property keys, hitboxes and colour channels taken from the game's
-  own tables (vendored in `data/`).
-- GD physics constants recorded with explicit VERIFIED / ESTIMATED markers.
-- Music: *Nine Circles* (NIGHTkilla/Rukkus, Newgrounds 533927) chosen and its
-  real arrangement analysed from the audio.
+- **Verification** (`docs/VERIFICATION.md`) — level string, `.gmd` container and
+  gzip/base64 encoding confirmed against real GD files; object ids, property
+  keys, hitboxes and colour channels taken from the game's own tables; GD
+  physics constants recorded with VERIFIED/ESTIMATED markers.
+- **Music** — *Nine Circles* (NIGHTkilla/Rukkus, NG 533927) analysed from the
+  actual audio: 174.00 BPM, real drops at bars 12 and 27.
+- **Export pipeline** — level string + `.gmd` writer/parser, proven by
+  reparsing with a completely independent library (gmdkit).
+- **Phase A layout** — 9 sections, 703 blocks, ~61 s, all 8 modes, synced to
+  bars. Rebuilt after playtesting (see below).
+- **Phase B triggers** — 17 verified trigger types.
+- **Phase C decoration** — palette from the supplied style sheet; giant eyes,
+  jagged teeth/maws, spirals, impossible lattices, glitch strips; the CLINE
+  mascot rebuilt to match the supplied model sheet.
+- **Phase D/E effects + endscreen** — 5 transitions using real 2.2 GPU shader
+  triggers (lens circle, bulge, pinch, glitch, chromatic glitch, shockwave)
+  and a Text-object endscreen.
+- **Phase F optimization** — cell dedupe plus a conservative post-pass.
+- **Playtesting** — Web Dashers driven headlessly (`tools/wd_harness.py`,
+  `tools/wd_play.py`); a real playtest finding forced a layout rebuild.
 
-### Phase A - gameplay layout
-9 sections, 703.5 blocks, 60.78 s, synced to bars 0/12/20/27/40/44.
-All 7 required modes plus ball:
-`cube → ship → ufo → wave → ball → spider → robot → swing → cube+ship → cube`.
+## Open
 
-### Phase B - triggers
-`TriggerSet` emits every verified trigger type: move, rotate, alpha, pulse,
-colour, toggle, spawn, shake, zoom, offset camera, follow, stop, touch, animate,
-bg-effect, count.
-
-### Phase C - decoration
-Evolving palette (6 identities, 15 custom channels), giant eyes, jagged teeth
-and maws, spirals, impossible lattices, glitch strips, particle fields, and the
-CLINE robot mascot with per-part animation groups.
-
-### Phase D/E - transitions and endscreen
-5 major transitions (dive-through-pupil, world rotate, collapse to point,
-teeth close, boss transform) using real 2.2 GPU shader triggers, plus an
-in-level endscreen built from real Text objects.
-
-### Phase F - optimization
-Cell dedupe (2164 -> 2074 objects) and a conservative post-pass that never
-touches gameplay ids.
-
-### Validation
-- `validate.py`: PASS (all object ids + property keys exist in the real tables).
-- `tools/crosscheck_gmdkit.py`: PASS - gmdkit independently parses the `.gmd`
-  and returns the same name, song id and object list.
-
-## Open / next
-
-- **Gameplay tuning.** The physics constants are only partly verified; the
-  layout uses generous margins but real in-game testing is required. This is
-  the single highest-value next step and needs a GD client.
-- **Decoration density.** 2074 objects is modest; more atmosphere is possible
-  once the layout is confirmed playable.
-- **Boss interaction.** The boss currently animates independently; making its
-  attacks react to player position (collision triggers) would deepen it.
-- **Song whitelist.** Must be confirmed in-game (the GD API is blocked here).
+- **Later sections are unplayed.** The harness can't currently confine runs to
+  a section, so only the intro was genuinely navigated.
+- **Native GD test.** Never opened in the real game — the file is structurally
+  valid and independently parseable, but that is not the same thing.
+- **Boss interaction.** The boss animates independently; making attacks react
+  to the player (collision triggers) would deepen it.
+- **Decoration density.** 1951 objects is modest; the reference style is much
+  richer. Safe to push once the layout is confirmed in-game.

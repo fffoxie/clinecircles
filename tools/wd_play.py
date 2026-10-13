@@ -28,7 +28,7 @@ from wd_harness import OUT, WebDashers            # noqa: E402
 
 CENTER_X = 419.0          # screenWidth/2 - 150, from config.js
 LEAD_MIN = 2.0            # jump when the hazard is within this window...
-LEAD_MAX = 55.0           # ...measured in units ahead of the player
+LEAD_MAX = 95.0           # ...measured in units ahead of the player
 PRESS_S = 0.10            # how long to hold the jump
 
 

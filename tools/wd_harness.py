@@ -233,6 +233,7 @@ class WebDashers:
             "(a) => { const sc = window.__wd.gs();"
             " if (!sc || !sc._state) return false;"
             " sc._playerWorldX = a.x;"
+            " if (Number.isFinite(sc._cameraX)) sc._cameraX = a.x;"
             " if (a.y !== null) sc._state.y = a.y;"
             " return true; }", {"x": x, "y": y}))
 
