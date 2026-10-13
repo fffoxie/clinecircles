@@ -1,16 +1,17 @@
-"""The CLINE robot mascot.
+"""The CLINE robot mascot, built to match the supplied model sheet.
 
-No reference image was supplied with the repository, and Geometry Dash does not
-allow custom textures, so the mascot is an **original interpretation** built
-from real GD objects and made recognisable through proportion and behaviour:
+Reference (rfimage/Gemini_Generated_Image_j83qx5j83qx5j83q.jpg) shows:
+  * a rounded-SQUARE head, white/lavender, glowing
+  * TWO TALL VERTICAL OVAL eyes (dark), the character's signature
+  * a small round knob/antenna on top
+  * angular 'ear' notches on both sides of the head
+  * a rounded chest with a dark purple chest plate
+  * dark purple ball joints at shoulders/elbows/knees
+  * white limb segments and crescent claw hands
+  * palette: white, lavender, mid purple, deep purple, near-black
 
-* a very large round head (object 50) with two oversized glowing eyes (51),
-* tiny pupils (1764) that can look around,
-* a single antenna (rod 16) with a floating ball (1764),
-* a small rounded body and stubby arms/legs (rods 15/16/17),
-* a small "smile" arc of dots that can invert into jagged teeth.
-
-Every part is tagged with a group so triggers can animate it.
+Geometry Dash has no custom textures, so the mascot is composed from real GD
+objects. Every part carries a group id so triggers can animate it.
 """
 
 from __future__ import annotations
@@ -20,20 +21,26 @@ from dataclasses import dataclass
 from ..level import Level
 from ..model import LevelObject
 
-O_CIRCLE_FILLED = 50     # Pulsing Filled Circle
-O_CIRCLE_RING = 51       # Pulsing Circle
-O_CIRCLE_LARGE = 497     # Large Pulsing Circle
-O_TINY_CIRCLE = 1764     # Tiny Circle
-O_ROD_SHORT = 17
+# Verified object ids used by the mascot.
+O_BLOCK_BEVEL = 890       # Beveled Block  (rounded square -> head/chest)
+O_BLOCK_SQUARE = 1        # plain square   (eye slots, ear notches)
+O_ROD_SHORT = 17          # limb segments
 O_ROD_MED = 16
-O_ROD_TALL = 15
-O_BLOCK_BEVEL = 890      # Beveled Block
+O_TINY_CIRCLE = 1764      # joints / knob / pupils
+O_CIRCLE_RING = 51        # eye rims
+O_QUARTER = 1838          # small quarter circle -> claw hands
+O_SPLIT_XS = 1000         # small accents
+
+# Palette from the model sheet.
+C_WHITE = 0xF2EFFA
+C_LAVENDER = 0xC9C2E8
+C_PURPLE = 0x6B5B95
+C_DEEP = 0x2E2745
+C_ACCENT = 0x8F7FD4
 
 
 @dataclass
 class RobotGroups:
-    """Group ids for each animatable part of the robot."""
-
     root: int
     head: int
     eye_l: int
@@ -60,7 +67,7 @@ def allocate_groups(level: Level, base: int = 100) -> RobotGroups:
 
 @dataclass
 class RobotStyle:
-    """Colour channels and z-layer for the mascot."""
+    """Colour channels for the mascot (resolved against the level palette)."""
 
     body_channel: int
     eye_channel: int
@@ -69,15 +76,15 @@ class RobotStyle:
     z_layer: int = -2
 
 
-def _obj(obj_id: int, x: float, y: float, *,
-         groups: list[int], channel: int, scale: float = 1.0,
-         z: int = -2, rot: float | None = None) -> LevelObject:
+def _o(obj_id: int, x: float, y: float, *, groups, channel, sx: float = 1.0,
+       sy: float | None = None, z: int = -2, rot: float | None = None):
     o = LevelObject(obj_id, x, y)
     o.color(channel)
     for g in groups:
         o.add_group(g)
-    if scale != 1.0:
-        o.scale(scale)
+    if sx != 1.0 or (sy is not None and sy != 1.0):
+        o.set(128, sx)
+        o.set(129, sx if sy is None else sy)
     o.z(z)
     if rot is not None:
         o.rot(rot)
@@ -87,81 +94,98 @@ def _obj(obj_id: int, x: float, y: float, *,
 def build_robot(level: Level, x: float, y: float, style: RobotStyle,
                 groups: RobotGroups, *, scale: float = 1.0,
                 variant: str = "cute") -> list[LevelObject]:
-    """Emit a CLINE robot at (x, y). Returns the objects created.
-
-    ``variant``: ``cute`` (happy), ``angry`` (boss teeth), ``glitch``.
-    """
+    """Emit a CLINE robot centred on (x, y). `y` is the head centre."""
     B = 30.0 * scale
     made: list[LevelObject] = []
 
-    def add(o: LevelObject) -> None:
+    def add(o):
         made.append(o)
         level.add(o)
 
-    root, head, el, er = (groups.root, groups.head, groups.eye_l, groups.eye_r)
-    pl, pr = groups.pupil_l, groups.pupil_r
+    root, head = groups.root, groups.head
+    el, er, pl, pr = groups.eye_l, groups.eye_r, groups.pupil_l, groups.pupil_r
     ant, body = groups.antenna, groups.body
-    al, ar, mouth, aura = (groups.arm_l, groups.arm_r, groups.mouth,
-                           groups.aura)
+    al, ar, aura = groups.arm_l, groups.arm_r, groups.aura
     z = style.z_layer
 
-    add(_obj(O_CIRCLE_LARGE, x, y + 0.6 * B, groups=[root, aura],
-             channel=style.accent_channel, scale=1.15 * scale, z=z - 1))
+    # ---- aura glow behind the whole character --------------------------
+    add(_o(O_CIRCLE_RING, x, y - 0.15 * B, groups=[root, aura],
+           channel=style.accent_channel, sx=3.4 * scale, z=z - 2))
 
-    # antenna
-    add(_obj(O_ROD_MED, x, y + 2.35 * B, groups=[root, head, ant],
-             channel=style.accent_channel, scale=scale, z=z))
-    add(_obj(O_TINY_CIRCLE, x, y + 2.85 * B, groups=[root, head, ant],
-             channel=style.eye_channel, scale=0.9 * scale, z=z))
+    # ---- head: rounded square -----------------------------------------
+    add(_o(O_BLOCK_BEVEL, x, y, groups=[root, head],
+           channel=style.body_channel, sx=2.5 * scale, z=z))
+    # ear notches (angular bumps either side)
+    for sgn in (-1, 1):
+        add(_o(O_BLOCK_SQUARE, x + sgn * 1.45 * B, y, groups=[root, head],
+               channel=style.accent_channel, sx=0.55 * scale,
+               sy=0.55 * scale, z=z - 1, rot=45))
 
-    # head
-    add(_obj(O_CIRCLE_FILLED, x, y + 1.15 * B, groups=[root, head],
-             channel=style.body_channel, scale=2.4 * scale, z=z))
-
-    # eyes
+    # ---- eyes: two TALL vertical ovals (signature feature) -------------
     eye_dx = 0.42 * B
-    add(_obj(O_CIRCLE_RING, x - eye_dx, y + 1.30 * B, groups=[root, head, el],
-             channel=style.eye_channel, scale=0.95 * scale, z=z + 1))
-    add(_obj(O_CIRCLE_RING, x + eye_dx, y + 1.30 * B, groups=[root, head, er],
-             channel=style.eye_channel, scale=0.95 * scale, z=z + 1))
-    add(_obj(O_TINY_CIRCLE, x - eye_dx, y + 1.28 * B,
-             groups=[root, head, el, pl], channel=style.pupil_channel,
-             scale=0.42 * scale, z=z + 2))
-    add(_obj(O_TINY_CIRCLE, x + eye_dx, y + 1.28 * B,
-             groups=[root, head, er, pr], channel=style.pupil_channel,
-             scale=0.42 * scale, z=z + 2))
+    for sgn, eg, pg in ((-1, el, pl), (1, er, pr)):
+        # dark rounded slot
+        add(_o(O_BLOCK_BEVEL, x + sgn * eye_dx, y + 0.02 * B,
+               groups=[root, head, eg], channel=style.pupil_channel,
+               sx=0.62 * scale, sy=1.45 * scale, z=z + 1))
+        # small highlight inside
+        add(_o(O_TINY_CIRCLE, x + sgn * eye_dx - 0.06 * B, y + 0.28 * B,
+               groups=[root, head, eg, pg], channel=style.eye_channel,
+               sx=0.24 * scale, z=z + 2))
 
-    # mouth
+    # ---- antenna knob --------------------------------------------------
+    add(_o(O_TINY_CIRCLE, x, y + 1.55 * B, groups=[root, head, ant],
+           channel=style.body_channel, sx=0.85 * scale, z=z))
+
+    # ---- mouth (expression) --------------------------------------------
     if variant == "cute":
-        for i in range(5):
-            t = (i - 2) / 2.0
-            add(_obj(O_TINY_CIRCLE, x + t * 0.28 * B,
-                     y + 0.78 * B + (0.09 * B if abs(t) < 1 else 0.03 * B),
-                     groups=[root, head, mouth], channel=style.pupil_channel,
-                     scale=0.30 * scale, z=z + 1))
+        for i in range(3):
+            add(_o(O_TINY_CIRCLE, x + (i - 1) * 0.20 * B, y - 0.62 * B,
+                   groups=[root, head, groups.mouth],
+                   channel=style.pupil_channel, sx=0.20 * scale, z=z + 1))
     else:
-        for i in range(6):
-            t = (i - 2.5) / 2.5
-            add(_obj(O_TINY_CIRCLE, x + t * 0.30 * B, y + 0.80 * B,
-                     groups=[root, head, mouth], channel=style.eye_channel,
-                     scale=0.34 * scale, z=z + 1, rot=45))
+        for i in range(5):
+            add(_o(O_BLOCK_SQUARE, x + (i - 2) * 0.24 * B, y - 0.66 * B,
+                   groups=[root, head, groups.mouth], channel=style.eye_channel,
+                   sx=0.30 * scale, sy=0.30 * scale, z=z + 1, rot=45))
 
-    # body
-    add(_obj(O_BLOCK_BEVEL, x, y - 0.35 * B, groups=[root, body],
-             channel=style.body_channel, scale=1.5 * scale, z=z))
+    # ---- chest ---------------------------------------------------------
+    add(_o(O_BLOCK_BEVEL, x, y - 1.85 * B, groups=[root, body],
+           channel=style.body_channel, sx=1.7 * scale, z=z))
+    add(_o(O_BLOCK_BEVEL, x, y - 1.95 * B, groups=[root, body],
+           channel=style.accent_channel, sx=1.15 * scale, sy=0.9 * scale,
+           z=z + 1))
 
-    # arms
-    add(_obj(O_ROD_SHORT, x - 0.95 * B, y - 0.20 * B,
-             groups=[root, body, al], channel=style.accent_channel,
-             scale=scale, rot=25, z=z))
-    add(_obj(O_ROD_SHORT, x + 0.95 * B, y - 0.20 * B,
-             groups=[root, body, ar], channel=style.accent_channel,
-             scale=scale, rot=-25, z=z))
+    # ---- arms: shoulder joint, upper, elbow, forearm, claw -------------
+    for sgn, ag in ((-1, al), (1, ar)):
+        sh = (x + sgn * 1.15 * B, y - 1.55 * B)
+        add(_o(O_TINY_CIRCLE, sh[0], sh[1], groups=[root, body, ag],
+               channel=style.accent_channel, sx=0.42 * scale, z=z + 2))
+        add(_o(O_ROD_SHORT, sh[0] + sgn * 0.10 * B, sh[1] - 0.55 * B,
+               groups=[root, body, ag], channel=style.body_channel,
+               sx=0.9 * scale, z=z + 1, rot=sgn * 12))
+        el2 = (sh[0] + sgn * 0.22 * B, sh[1] - 1.05 * B)
+        add(_o(O_TINY_CIRCLE, el2[0], el2[1], groups=[root, body, ag],
+               channel=style.accent_channel, sx=0.38 * scale, z=z + 2))
+        add(_o(O_ROD_SHORT, el2[0] + sgn * 0.10 * B, el2[1] - 0.55 * B,
+               groups=[root, body, ag], channel=style.body_channel,
+               sx=0.9 * scale, z=z + 1, rot=sgn * 6))
+        add(_o(O_QUARTER, el2[0] + sgn * 0.16 * B, el2[1] - 1.05 * B,
+               groups=[root, body, ag], channel=style.body_channel,
+               sx=0.85 * scale, z=z + 2, rot=sgn * 150))
 
-    # legs
-    add(_obj(O_ROD_SHORT, x - 0.42 * B, y - 1.05 * B, groups=[root, body],
-             channel=style.accent_channel, scale=scale, z=z))
-    add(_obj(O_ROD_SHORT, x + 0.42 * B, y - 1.05 * B, groups=[root, body],
-             channel=style.accent_channel, scale=scale, z=z))
-
+    # ---- legs ----------------------------------------------------------
+    for sgn in (-1, 1):
+        hip = (x + sgn * 0.48 * B, y - 2.55 * B)
+        add(_o(O_TINY_CIRCLE, hip[0], hip[1], groups=[root, body],
+               channel=style.accent_channel, sx=0.40 * scale, z=z + 2))
+        add(_o(O_ROD_SHORT, hip[0], hip[1] - 0.55 * B, groups=[root, body],
+               channel=style.body_channel, sx=0.95 * scale, z=z + 1))
+        add(_o(O_TINY_CIRCLE, hip[0], hip[1] - 1.10 * B, groups=[root, body],
+               channel=style.accent_channel, sx=0.36 * scale, z=z + 2))
+        add(_o(O_ROD_SHORT, hip[0], hip[1] - 1.62 * B, groups=[root, body],
+               channel=style.body_channel, sx=0.95 * scale, z=z + 1))
+        add(_o(O_BLOCK_BEVEL, hip[0], hip[1] - 2.15 * B, groups=[root, body],
+               channel=style.body_channel, sx=0.95 * scale, sy=0.55 * scale,
+               z=z + 2))
     return made

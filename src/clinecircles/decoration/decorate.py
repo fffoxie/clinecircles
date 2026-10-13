@@ -143,7 +143,7 @@ def decorate_drop2(ctx: DecorContext, x0: float, x1: float) -> int:
     lv, ts, tl, g = ctx.level, ctx.ts, ctx.tl, ctx.groups
     n = 0
     # the mascot's angry form appears, bigger, watching from behind
-    R.build_robot(lv, x0 + 700, 340, _robot_style(PAL.P_DROP2, z=-2), g,
+    R.build_robot(lv, x0 + 700, 340, _robot_style(PAL.P_ALIVE, z=-2), g,
                   scale=2.6, variant="angry")
     n += 16
     ts.move(x0, 60, g.root, 300, -80, duration=tl.track.bar_s * 8,

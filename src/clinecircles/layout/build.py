@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 from .. import gamedata as gd
 from ..level import Level
 from ..music import Section, SpeedSegment, Timeline, TrackProfile, load_track
-from . import sections as S
+from . import plan as S
 from .primitives import BLOCK, Builder
 
 END_BAR = 44.0  # verified: bar 44 = 60.777 s in the analysed arrangement
