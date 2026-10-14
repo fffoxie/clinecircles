@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+
+# Scratch output at the top level of out/ (regeneratable).
+# Versioned folders out/v1/, out/v2/ ... ARE tracked so the level can be
+# downloaded and playtested straight from the repo.
+/out/*.gmd
+/out/*.txt
+/out/*.png
+/out/*.json
+
+# Node (preview tool)
+node_modules/
+
+# OS
+.DS_Store
+
+# Sandbox runtime state (never commit)
+.cline-home/

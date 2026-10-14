@@ -1,0 +1,60 @@
+{
+  "name": "CLINE CIRCLES",
+  "level_version": "v2",
+  "generator_version": "0.1.0",
+  "song": {
+    "title": "Nine Circles",
+    "artist": "NIGHTkilla (Rukkus)",
+    "newgrounds_id": 533927
+  },
+  "bpm": 174.0,
+  "objects": 655,
+  "length_units": 21106.42,
+  "length_blocks": 703.55,
+  "duration_s": 60.778,
+  "sections": {
+    "intro": [
+      0.0,
+      5157.18
+    ],
+    "drop1_ship": [
+      5157.18,
+      7294.67
+    ],
+    "drop1_ufo": [
+      7294.67,
+      9432.16
+    ],
+    "breakdown_wave": [
+      9432.16,
+      10721.46
+    ],
+    "breakdown_ball_spider": [
+      10721.46,
+      12440.52
+    ],
+    "drop2_robot": [
+      12440.52,
+      14578.01
+    ],
+    "drop2_swing": [
+      14578.01,
+      16715.5
+    ],
+    "boss_fight": [
+      16715.5,
+      19387.36
+    ],
+    "finale": [
+      19387.36,
+      21106.42
+    ]
+  },
+  "decoration": null,
+  "effects": null,
+  "validation": {
+    "ok": true,
+    "errors": [],
+    "warnings": []
+  }
+}

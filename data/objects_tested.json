@@ -1,0 +1,331 @@
+{
+ "1": {
+  "label": "solid block floating 2 blocks up",
+  "placement_y": 75.0,
+  "verdict": "player passes through",
+  "deaths": [],
+  "max_x": 910.1,
+  "flags": [],
+  "engine": "Web Dashers (browser GD reimplementation)"
+ },
+ "2": {
+  "label": "grid-topped block at ground level",
+  "placement_y": 15.0,
+  "verdict": "player passes through",
+  "deaths": [
+   753.1
+  ],
+  "max_x": 736.3,
+  "flags": [],
+  "engine": "Web Dashers (browser GD reimplementation)"
+ },
+ "5": {
+  "label": "inner-square block at ground level",
+  "placement_y": 15.0,
+  "verdict": "player passes through",
+  "deaths": [],
+  "max_x": 895.4,
+  "flags": [],
+  "engine": "Web Dashers (browser GD reimplementation)"
+ },
+ "8": {
+  "label": "ground spike",
+  "placement_y": 15.0,
+  "verdict": "player passes through",
+  "deaths": [
+   763.5
+  ],
+  "max_x": 746.8,
+  "flags": [],
+  "engine": "Web Dashers (browser GD reimplementation)"
+ },
+ "10": {
+  "label": "blue gravity portal (normal)",
+  "placement_y": 15.0,
+  "verdict": "player passes through",
+  "deaths": [],
+  "max_x": 910.1,
+  "flags": [],
+  "engine": "Web Dashers (browser GD reimplementation)"
+ },
+ "11": {
+  "label": "yellow gravity portal (inverted)",
+  "placement_y": 15.0,
+  "verdict": "triggers a state change",
+  "deaths": [],
+  "max_x": 912.1,
+  "flags": [
+   "gravityFlipped"
+  ],
+  "engine": "Web Dashers (browser GD reimplementation)"
+ },
+ "12": {
+  "label": "cube portal",
+  "placement_y": 15.0,
+  "verdict": "player passes through",
+  "deaths": [],
+  "max_x": 901.7,
+  "flags": [],
+  "engine": "Web Dashers (browser GD reimplementation)"
+ },
+ "13": {
+  "label": "ship portal",
+  "placement_y": 15.0,
+  "verdict": "triggers a state change",
+  "deaths": [],
+  "max_x": 916.3,
+  "flags": [
+   "flying"
+  ],
+  "engine": "Web Dashers (browser GD reimplementation)"
+ },
+ "35": {
+  "label": "yellow jump pad",
+  "placement_y": 15.0,
+  "verdict": "player passes through",
+  "deaths": [],
+  "max_x": 897.5,
+  "flags": [],
+  "engine": "Web Dashers (browser GD reimplementation)"
+ },
+ "36": {
+  "label": "yellow jump orb",
+  "placement_y": 45.0,
+  "verdict": "player passes through",
+  "deaths": [],
+  "max_x": 924.7,
+  "flags": [],
+  "engine": "Web Dashers (browser GD reimplementation)"
+ },
+ "39": {
+  "label": "half spike",
+  "placement_y": 15.0,
+  "verdict": "player passes through",
+  "deaths": [
+   757.3
+  ],
+  "max_x": 742.6,
+  "flags": [],
+  "engine": "Web Dashers (browser GD reimplementation)"
+ },
+ "47": {
+  "label": "ball portal",
+  "placement_y": 15.0,
+  "verdict": "triggers a state change",
+  "deaths": [],
+  "max_x": 912.1,
+  "flags": [
+   "ball"
+  ],
+  "engine": "Web Dashers (browser GD reimplementation)"
+ },
+ "67": {
+  "label": "blue gravity pad",
+  "placement_y": 15.0,
+  "verdict": "triggers a state change",
+  "deaths": [],
+  "max_x": 931.0,
+  "flags": [
+   "gravityFlipped"
+  ],
+  "engine": "Web Dashers (browser GD reimplementation)"
+ },
+ "84": {
+  "label": "blue gravity orb",
+  "placement_y": 45.0,
+  "verdict": "player passes through",
+  "deaths": [],
+  "max_x": 920.5,
+  "flags": [],
+  "engine": "Web Dashers (browser GD reimplementation)"
+ },
+ "90": {
+  "label": "coloured block at ground level",
+  "placement_y": 15.0,
+  "verdict": "player passes through",
+  "deaths": [
+   759.4
+  ],
+  "max_x": 742.6,
+  "flags": [],
+  "engine": "Web Dashers (browser GD reimplementation)"
+ },
+ "99": {
+  "label": "green size portal (normal)",
+  "placement_y": 15.0,
+  "verdict": "player passes through",
+  "deaths": [],
+  "max_x": 884.9,
+  "flags": [],
+  "engine": "Web Dashers (browser GD reimplementation)"
+ },
+ "101": {
+  "label": "pink size portal (small)",
+  "placement_y": 15.0,
+  "verdict": "triggers a state change",
+  "deaths": [],
+  "max_x": 910.1,
+  "flags": [
+   "mini"
+  ],
+  "engine": "Web Dashers (browser GD reimplementation)"
+ },
+ "103": {
+  "label": "small spike",
+  "placement_y": 15.0,
+  "verdict": "player passes through",
+  "deaths": [
+   757.3
+  ],
+  "max_x": 742.6,
+  "flags": [],
+  "engine": "Web Dashers (browser GD reimplementation)"
+ },
+ "111": {
+  "label": "ufo portal",
+  "placement_y": 15.0,
+  "verdict": "triggers a state change",
+  "deaths": [],
+  "max_x": 920.5,
+  "flags": [
+   "ufo"
+  ],
+  "engine": "Web Dashers (browser GD reimplementation)"
+ },
+ "135": {
+  "label": "thorn pit hazard",
+  "placement_y": 15.0,
+  "verdict": "player passes through",
+  "deaths": [],
+  "max_x": 903.8,
+  "flags": [],
+  "engine": "Web Dashers (browser GD reimplementation)"
+ },
+ "144": {
+  "label": "invisible spike",
+  "placement_y": 15.0,
+  "verdict": "player passes through",
+  "deaths": [
+   748.9
+  ],
+  "max_x": 732.2,
+  "flags": [],
+  "engine": "Web Dashers (browser GD reimplementation)"
+ },
+ "200": {
+  "label": "speed portal 0.5x",
+  "placement_y": 15.0,
+  "verdict": "player passes through",
+  "deaths": [],
+  "max_x": 920.5,
+  "flags": [],
+  "engine": "Web Dashers (browser GD reimplementation)"
+ },
+ "202": {
+  "label": "speed portal 2x",
+  "placement_y": 15.0,
+  "verdict": "player passes through",
+  "deaths": [],
+  "max_x": 1005.4,
+  "flags": [],
+  "engine": "Web Dashers (browser GD reimplementation)"
+ },
+ "203": {
+  "label": "speed portal 3x",
+  "placement_y": 15.0,
+  "verdict": "player passes through",
+  "deaths": [],
+  "max_x": 1088.1,
+  "flags": [],
+  "engine": "Web Dashers (browser GD reimplementation)"
+ },
+ "660": {
+  "label": "wave portal",
+  "placement_y": 15.0,
+  "verdict": "triggers a state change",
+  "deaths": [],
+  "max_x": 933.1,
+  "flags": [
+   "wave"
+  ],
+  "engine": "Web Dashers (browser GD reimplementation)"
+ },
+ "745": {
+  "label": "robot portal",
+  "placement_y": 15.0,
+  "verdict": "triggers a state change",
+  "deaths": [],
+  "max_x": 912.1,
+  "flags": [
+   "robot"
+  ],
+  "engine": "Web Dashers (browser GD reimplementation)"
+ },
+ "1022": {
+  "label": "green gravity orb",
+  "placement_y": 45.0,
+  "verdict": "player passes through",
+  "deaths": [],
+  "max_x": 933.1,
+  "flags": [],
+  "engine": "Web Dashers (browser GD reimplementation)"
+ },
+ "1331": {
+  "label": "spider portal",
+  "placement_y": 15.0,
+  "verdict": "triggers a state change",
+  "deaths": [],
+  "max_x": 916.3,
+  "flags": [
+   "spider"
+  ],
+  "engine": "Web Dashers (browser GD reimplementation)"
+ },
+ "1332": {
+  "label": "red jump pad",
+  "placement_y": 15.0,
+  "verdict": "player passes through",
+  "deaths": [],
+  "max_x": 916.3,
+  "flags": [],
+  "engine": "Web Dashers (browser GD reimplementation)"
+ },
+ "1333": {
+  "label": "red jump orb",
+  "placement_y": 45.0,
+  "verdict": "player passes through",
+  "deaths": [],
+  "max_x": 895.4,
+  "flags": [],
+  "engine": "Web Dashers (browser GD reimplementation)"
+ },
+ "1334": {
+  "label": "speed portal 4x",
+  "placement_y": 15.0,
+  "verdict": "player passes through",
+  "deaths": [],
+  "max_x": 1200.6,
+  "flags": [],
+  "engine": "Web Dashers (browser GD reimplementation)"
+ },
+ "1705": {
+  "label": "large saw blade",
+  "placement_y": 75.0,
+  "verdict": "player passes through",
+  "deaths": [],
+  "max_x": 903.8,
+  "flags": [],
+  "engine": "Web Dashers (browser GD reimplementation)"
+ },
+ "1706": {
+  "label": "medium saw blade",
+  "placement_y": 45.0,
+  "verdict": "player passes through",
+  "deaths": [
+   753.1
+  ],
+  "max_x": 734.2,
+  "flags": [],
+  "engine": "Web Dashers (browser GD reimplementation)"
+ }
+}
