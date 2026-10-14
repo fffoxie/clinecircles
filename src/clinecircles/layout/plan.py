@@ -85,22 +85,28 @@ def saw(ctx: Ctx, x: float, y: float, size: str = "medium",
 
 def orb(ctx: Ctx, x: float, y: float, kind: str = "yellow",
         groups: tuple[int, ...] = ()) -> None:
-    ctx.build.orb(x, y, kind)
+    """y is in UNITS (a ground-level orb is y=45)."""
+    ctx.build.orb(x, (y - GROUND) / BLOCK, kind)
 
 
 def portal(ctx: Ctx, x: float, y: float, obj: gd.Obj,
            groups: tuple[int, ...] = ()) -> None:
-    ctx.build.portal(x, y, obj, groups)
+    """y is in UNITS; Builder.portal expects blocks, so convert here."""
+    ctx.build.portal(x, (y - GROUND) / BLOCK, obj, groups)
 
 
 def mode_portal(ctx: Ctx, x: float, mode: gd.GameMode,
-                y: float = FLOAT1) -> None:
-    ctx.build.mode(x, y, mode)
+                y: float = GROUND) -> None:
+    """PLAYTEST FIX 1: portals must overlap the player's body (y 0..30).
+    PLAYTEST FIX 2: Builder.portal takes BLOCKS, not units - passing units
+    put every portal 450 units too high, so no mode or speed ever changed.
+    """
+    ctx.build.mode(x, (y - GROUND) / BLOCK, mode)
 
 
 def speed_portal(ctx: Ctx, x: float, speed: gd.Speed,
-                 y: float = FLOAT1) -> None:
-    ctx.build.speed(x, y, speed)
+                 y: float = GROUND) -> None:
+    ctx.build.speed(x, (y - GROUND) / BLOCK, speed)
 
 
 # --------------------------------------------------------------------------
@@ -117,9 +123,12 @@ def platform(ctx: Ctx, x0: float, x1: float, level: int = 0,
 
 def corridor(ctx: Ctx, span_blocks: float, level: int = 0,
              color: int | None = None) -> None:
-    """Floor+ceiling floating rows leaving `span_blocks` of flyable space."""
+    """Ceiling row forming a flight corridor above the engine ground.
+
+    PLAYTEST FIX: no floor row is placed - the engine ground is the floor.
+    A solid row below the player would be run into, not flown over.
+    """
     yc = row_centre(level)
-    platform(ctx, ctx.x0, ctx.x1, level, color)
     top_yc = yc + span_blocks * BLOCK
     ctx.build.floor(ctx.x0, ctx.x1, (top_yc - 15.0) / BLOCK, color)
 
@@ -128,14 +137,11 @@ def gap(ctx: Ctx, x: float, opening: float, centre: float, level: int = 0,
         width: float = 45.0, color: int | None = None) -> None:
     """Pinch a corridor: solid above and below, leaving an opening."""
     yc = row_centre(level)
-    lo = yc - 15.0 + centre * BLOCK - opening * BLOCK / 2
+    base = yc - 15.0
+    lo = base + centre * BLOCK - opening * BLOCK / 2
     hi = lo + opening * BLOCK
-    y = yc - 15.0
-    while y + BLOCK <= lo:
-        ctx.build.solid(x, y + BLOCK / 2, width, BLOCK, color)
-        y += BLOCK
-    y = hi
-    while y <= yc + 15.0 + 8 * BLOCK:
+    y = max(hi, base)
+    while y <= base + 9 * BLOCK:
         ctx.build.solid(x, y + BLOCK / 2, width, BLOCK, color)
         y += BLOCK
 
@@ -176,6 +182,7 @@ def build_intro(ctx: Ctx, tl: Timeline, bar0: float) -> None:
 def build_ship(ctx: Ctx, tl: Timeline, bar0: float) -> None:
     """bars 12-16, ship, 2x - 6-block openings, generous but rhythmic."""
     X = lambda b: _x(tl, bar0 + b)  # noqa: E731
+    speed_portal(ctx, X(0.0), gd.Speed.FAST)
     corridor(ctx, 6.0, 0, gd.ColorChannel.MG)
     for b, opening, centre in ((0.6, 3.2, 1.8), (1.4, 2.6, 3.4),
                                (2.2, 3.0, 1.6), (3.0, 2.8, 3.6),
@@ -201,6 +208,7 @@ def build_wave(ctx: Ctx, tl: Timeline, bar0: float) -> None:
     """bars 20-23, wave, 1x - sparse, precise, uncanny."""
     X = lambda b: _x(tl, bar0 + b)  # noqa: E731
     mode_portal(ctx, X(0.0), gd.GameMode.WAVE)
+    speed_portal(ctx, X(0.0), gd.Speed.NORMAL)
     corridor(ctx, 5.0, 1, gd.ColorChannel.MG)
     for b, opening, centre in ((0.5, 2.6, 1.6), (1.0, 2.4, 2.8),
                               (1.5, 2.6, 1.4), (2.0, 2.2, 2.6),
@@ -212,6 +220,7 @@ def build_ball_spider(ctx: Ctx, tl: Timeline, bar0: float) -> None:
     """bars 23-27, ball then spider, 1x - gravity flips and teleports."""
     X = lambda b: _x(tl, bar0 + b)  # noqa: E731
     mode_portal(ctx, X(0.0), gd.GameMode.BALL)
+    speed_portal(ctx, X(0.0), gd.Speed.NORMAL)
     # ball: flip over a spike pit
     spikes_between(ctx, X(0.6), X(1.6), 5, gd.ColorChannel.OBJ)
     orb(ctx, X(1.1), row_centre(1), "blue")
@@ -230,6 +239,7 @@ def build_robot(ctx: Ctx, tl: Timeline, bar0: float) -> None:
     """bars 27-31, robot, 2x - variable-height jumps over rising spikes."""
     X = lambda b: _x(tl, bar0 + b)  # noqa: E731
     mode_portal(ctx, X(0.0), gd.GameMode.ROBOT)
+    speed_portal(ctx, X(0.0), gd.Speed.FAST)
     for i, b in enumerate((0.6, 1.4, 2.2, 3.0)):
         spike(ctx, X(b), 1 + (i % 2), color=gd.ColorChannel.OBJ)
     platform(ctx, X(3.5), X(4.0), 0, gd.ColorChannel.MG)
@@ -266,6 +276,7 @@ def build_finale(ctx: Ctx, tl: Timeline, bar0: float) -> None:
     the endscreen composition."""
     X = lambda b: _x(tl, bar0 + b)  # noqa: E731
     mode_portal(ctx, X(0.0), gd.GameMode.CUBE)
+    speed_portal(ctx, X(0.0), gd.Speed.NORMAL)
     spike(ctx, X(0.8), 1, color=gd.ColorChannel.OBJ)
     spike(ctx, X(1.6), 2, color=gd.ColorChannel.OBJ)
     # open space from bar 2.4 to the end for the endscreen

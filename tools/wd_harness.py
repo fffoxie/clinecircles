@@ -49,7 +49,7 @@ window.__wd = (function () {
     return cached;
   }
   function modeOf(s) {
-    return s.isShip ? 'ship' : s.isUfo ? 'ufo' : s.isBall ? 'ball'
+    return s.isFlying ? 'ship' : s.isUfo ? 'ufo' : s.isBall ? 'ball'
       : s.isWave ? 'wave' : s.isRobot ? 'robot' : s.isSpider ? 'spider'
       : s.isSwing ? 'swing' : 'cube';
   }
@@ -57,10 +57,21 @@ window.__wd = (function () {
     const sc = gs();
     const s = sc && sc._state;
     if (s) {
+      const fl = [];
+      if (s.isFlying) fl.push('flying');
+      if (s.isUfo) fl.push('ufo');
+      if (s.isBall) fl.push('ball');
+      if (s.isWave) fl.push('wave');
+      if (s.isRobot) fl.push('robot');
+      if (s.isSpider) fl.push('spider');
+      if (s.isSwing) fl.push('swing');
+      if (s.isMini) fl.push('mini');
+      if (s.gravityFlipped) fl.push('gravityFlipped');
+      if (s.isDual) fl.push('dual');
       trace.push({ t: performance.now(), x: sc._playerWorldX, y: s.y,
                    vy: s.yVelocity, g: s.onGround ? 1 : 0,
                    dead: s.isDead ? 1 : 0, mode: modeOf(s),
-                   grav: s.gravityFlipped ? 1 : 0 });
+                   grav: s.gravityFlipped ? 1 : 0, flags: fl });
       if (trace.length > 80000) running = false;
     }
     if (running) requestAnimationFrame(frame);

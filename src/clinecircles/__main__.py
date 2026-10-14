@@ -21,6 +21,16 @@ from .validate import validate_level
 OUT_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "out")
 
 
+def version_dir(version: str) -> str:
+    """Each build lands in its own folder so older versions stay readable.
+
+    out/v1/, out/v2/, ... ; a new build never overwrites an older one.
+    """
+    d = os.path.join(OUT_DIR, version)
+    os.makedirs(os.path.join(d, "screenshots"), exist_ok=True)
+    return d
+
+
 def cmd_info(args: argparse.Namespace) -> int:
     res = build_level()
     t = res.track
@@ -38,7 +48,7 @@ def cmd_info(args: argparse.Namespace) -> int:
 
 
 def cmd_build(args: argparse.Namespace) -> int:
-    os.makedirs(OUT_DIR, exist_ok=True)
+    outdir = version_dir(args.version)
     res = build_level()
     level = res.level
     deco_stats = None
@@ -64,15 +74,16 @@ def cmd_build(args: argparse.Namespace) -> int:
     print(rep.render())
 
     name = "CLINE CIRCLES"
-    gmd_path = os.path.join(OUT_DIR, f"{name}.gmd")
-    ls_path = os.path.join(OUT_DIR, f"{name}.levelstring.txt")
+    gmd_path = os.path.join(outdir, f"{name}.gmd")
+    ls_path = os.path.join(outdir, f"{name}.levelstring.txt")
     write_gmd(level, gmd_path)
     with open(ls_path, "w", encoding="utf-8") as fh:
         fh.write(build_level_string(level))
 
     meta = {
         "name": name,
-        "version": __version__,
+        "level_version": args.version,
+        "generator_version": __version__,
         "song": {"title": res.track.title, "artist": res.track.artist,
                  "newgrounds_id": res.track.song_id},
         "bpm": res.track.bpm,
@@ -90,18 +101,19 @@ def cmd_build(args: argparse.Namespace) -> int:
         "validation": {"ok": rep.ok, "errors": rep.errors,
                        "warnings": rep.warnings},
     }
-    with open(os.path.join(OUT_DIR, "level_info.json"), "w") as fh:
+    with open(os.path.join(outdir, "level_info.json"), "w") as fh:
         json.dump(meta, fh, indent=2)
 
     print(f"\n  wrote {gmd_path}")
     print(f"  wrote {ls_path}")
-    print(f"  wrote {os.path.join(OUT_DIR, 'level_info.json')}")
+    print("  wrote " + os.path.join(outdir, "level_info.json"))
     return 0 if rep.ok else 1
 
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="clinecircles")
     ap.add_argument("command", choices=["build", "info"])
+    ap.add_argument("--version", default="v1", help="output folder under out/")
     ap.add_argument("--layout-only", action="store_true",
                     help="skip decoration and effects (Phase A only)")
     ap.add_argument("--no-effects", action="store_true",
