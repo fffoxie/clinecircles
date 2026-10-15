@@ -58,3 +58,43 @@ fi
 
 echo "== ready =="
 echo "   export LD_LIBRARY_PATH=$ROOT/usr/lib/x86_64-linux-gnu:$ROOT/lib/x86_64-linux-gnu"
+
+# ---- sprite atlases (for tools/gd_visualize.py) ----
+SHEETDIR=/tmp/sheets
+if [ ! -f "$SHEETDIR/GJ_GameSheet.png" ]; then
+  echo "== fetching GD sprite atlases =="
+  mkdir -p "$SHEETDIR"
+  for s in GJ_GameSheet GJ_GameSheet02 GJ_GameSheet03 GJ_GameSheet04 \
+           GJ_WebSheet GJ_ParticleSheet GJ_GameSheetEditor GJ_GameSheetGlow; do
+    for e in png json; do
+      curl -sL --max-time 60 \
+        "https://web-dashers.github.io/assets/sheets/$s.$e" \
+        -o "$SHEETDIR/$s.$e" || true
+    done
+  done
+  echo "   $(ls "$SHEETDIR" | wc -l) files"
+else
+  echo "== sprite atlases already present =="
+fi
+
+# ---- engine object definitions (sprite frame per object id) ----
+if [ ! -f /tmp/wd/engine_defs.json ]; then
+  echo "== dumping engine object definitions =="
+  cat > /tmp/wd/dump.js <<'JSEOF'
+global.window = {};
+const fs = require('fs');
+eval(fs.readFileSync('/tmp/wd/game_allObjects.js', 'utf8'));
+fs.writeFileSync('/tmp/wd/engine_defs.json', JSON.stringify(window.allobjects()));
+console.log('   dumped', Object.keys(window.allobjects()).length, 'definitions');
+JSEOF
+  node /tmp/wd/dump.js || true
+fi
+
+# ---- curl the level files too, if missing ----
+if [ ! -f /tmp/wd/loading-screen.js ]; then
+  curl -sL --max-time 30 \
+    "https://web-dashers.github.io/assets/scripts/core/loading-screen.js" \
+    -o /tmp/wd/loading-screen.js || true
+fi
+
+echo "== visualizer ready: python3 tools/gd_visualize.py <file.gmd> =="
