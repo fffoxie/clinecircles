@@ -18,7 +18,7 @@ import zlib
 
 from . import gamedata as gd
 from .level import Level
-from .model import Color, LevelObject
+from .model import Color, LevelObject, fnum
 
 GMD_BINARY_VERSION = 45
 
@@ -50,6 +50,10 @@ def build_level_string(level: Level) -> str:
         "kA8": "1" if level.dual else "0",
         "kA4": str(int(level.speed)),
         "kA10": "1" if level.two_player else "0",
+        "kA11": "1" if level.flip_gravity else "0",
+        "kA13": fnum(level.song_offset),
+        "kA15": "1" if level.song_fade_in else "0",
+        "kA16": "1" if level.song_fade_out else "0",
     }
     seen = {"kS38"}
     for key, val in _FLAG_DEFAULTS:
@@ -84,11 +88,17 @@ def parse_level_string(s: str) -> Level:
             level.mini = v == "1"
         elif k == "kA8":
             level.dual = v == "1"
+        elif k == "kA13":
+            level.song_offset = float(v or 0)
+        elif k == "kA15":
+            level.song_fade_in = v == "1"
+        elif k == "kA16":
+            level.song_fade_out = v == "1"
         elif k == "kA6":
             level.background_id = int(v or 1)
         elif k == "kA7":
             level.ground_id = int(v or 1)
-        elif k in ("kA13", "kA14", "kA15", "kA16", "kA17", "kA18", "kS39"):
+        elif k in ("kA14", "kA17", "kA18", "kS39"):
             continue
         else:
             level.gmd_header.setdefault("_level_string", {})[k] = v

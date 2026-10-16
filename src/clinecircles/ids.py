@@ -109,6 +109,27 @@ _OBJECTS = """
 1000  table SplitObjectXS
 1841  table ExpandObjectL
 914   table TextGameObject (string in prop 31, base64)
+50    table Pulsing Filled Circle (editor tab 12)
+51    table Pulsing Circle (editor tab 12)
+236   table Large Pulsing Hollow Circle (tab 12)
+497   table Large Pulsing Circle (tab 12)
+997   table Large Split Circle (tab 12)
+998   table Medium Split Circle (tab 12)
+999   table Small Split Circle (tab 12)
+1000  table Very Small Split Circle (tab 12)
+1841  table Large Expanding Circle Animation (tab 7)
+1842  table Small Expanding Circle Animation (tab 7)
+1837  table Large Quarter Circle (tab 11)
+1838  table Small Quarter Circle (tab 11)
+85    table Large Decorative Gear (tab 12)
+86    table Medium Decorative Gear (tab 12)
+87    table Small Decorative Gear (tab 12)
+1702  table Spiked Circle Hazard (tab 12)
+498   table Chain Link (tab 11)
+1603  table Cartoon Arrow (tab 11)
+1525  table Large Rotating Particle (tab 12)
+1526  table Medium Rotating Particle (tab 12)
+1527  table Small Rotating Particle (tab 12)
 18    table Large Decorative Spikes (editor tab 11)
 19    table Medium Decorative Spikes (editor tab 11)
 20    table Small Decorative Spikes (editor tab 11)
@@ -247,6 +268,21 @@ _OBJ_PROPS = """
 137   table object.ICE_BLOCK
 200   table trigger.move.PLAYER_2 (also rotate / collision / song)
 506   table trigger.camera_guide.PREVIEW_OPACITY
+81    table trigger.touch.HOLD_MODE
+82    table trigger.touch.TOGGLE_MODE
+89    table trigger.touch.DUAL_MODE
+102   table trigger.spawn.DISABLE_PREVIEW
+104   table trigger.count.MULTI_ACTIVATE
+441   table trigger.spawn.ORDERED
+442   table trigger.spawn.REMAPS (group remaps, string)
+175   table trigger.shader.GLITCH_SPEED / SHOCKWAVE_SPEED / CHROMATIC_GLITCH_SPEED
+176   table trigger.shader.*_STRENGTH (GLITCH/BULGE/HUE/INVERT/LENS_CIRCLE/...)
+179   table trigger.shader.*_SIZE / GLITCH_SLICE_HEIGHT / PINCH_MODIFIER
+180   table trigger.shader.*_RADIUS / *_TARGET_X / CHROMATIC_GLITCH_RGB_OFFSET
+512   table trigger.shader.SHOCKWAVE_MAX_SIZE / PINCH_RADIUS
+514   table trigger.shader.*_RELATIVE
+515   table trigger.shader.PIXELATE_HARD_EDGES
+531   table trigger.shader.OPTIONS_DISABLE_PREVIEW
 """
 
 OBJECT_SOURCE: dict[int, tuple[str, str]] = _parse(_OBJECTS + _TRIGGERS)

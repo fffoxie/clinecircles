@@ -52,9 +52,9 @@ class SectionDesign:
 # measured structural boundary from analyze_song.py or an 8-bar phrase line.
 # --------------------------------------------------------------------------
 DESIGN: list[SectionDesign] = [
-    SectionDesign("intro", "build", 0, 4, GameMode.CUBE, Speed.NORMAL, 1,
-                  "calm reveal: both mascots drift in, easy cube, deco B5-B4"),
-    SectionDesign("build", "build", 4, 15, GameMode.SHIP, Speed.FAST, 2,
+    SectionDesign("intro", "build", 0, 8, GameMode.CUBE, Speed.NORMAL, 1,
+                  "calm reveal: both mascots drift in, easy cube, deco at B5-B4"),
+    SectionDesign("build", "build", 8, 15, GameMode.SHIP, Speed.FAST, 2,
                   "build-up: cube into ship, deco layers fill in, palette warms"),
     SectionDesign("drop1", "drop", 15, 24, GameMode.SHIP, Speed.FAST, 3,
                   "first drop: ship rhythm locked to the kick, camera zoom in"),

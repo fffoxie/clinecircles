@@ -22,6 +22,12 @@ class Level:
     description: str = ""
     creator: str = "Cline"
     song_id: int = 0
+    #: level-string header kA13 - where playback starts inside the song, in
+    #: seconds. Verified: data/prop_table.csv "kA13 level.SONG_OFFSET".
+    song_offset: float = 0.0
+    #: level-string header kA15 / kA16 - song fade in / out booleans
+    song_fade_in: bool = False
+    song_fade_out: bool = False
     objects: list[LevelObject] = field(default_factory=list)
     colors: dict[int, Color] = field(default_factory=default_colors)
 
@@ -34,6 +40,7 @@ class Level:
     ground_id: int = 1
     middle_id: int = 0
     two_player: bool = False
+    flip_gravity: bool = False
     start_speed_locked: bool = True
 
     # .gmd plist keys
