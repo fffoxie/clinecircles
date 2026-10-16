@@ -40,6 +40,34 @@ if [ -n "$CH" ]; then
   echo "== chromium missing libraries: $MISSING =="
 fi
 
+# ---- fonts (Chromium aborts without a fontconfig setup) -------------------
+# NG Guard draws text into a canvas; without any font Chromium dies with
+#   FATAL:third_party/skia/src/ports/SkFontMgr_FontConfigInterface.cpp:163
+FONTROOT=/tmp/fontsroot
+if [ ! -d "$FONTROOT/usr/share/fonts" ]; then
+  echo "== fetching fonts (chromium needs a fontconfig setup) =="
+  mkdir -p /tmp/apt/lists/partial /tmp/apt/cache/archives/partial \
+           /tmp/apt/state/lists/partial /tmp/fontcache
+  apt-get -o Dir::State::Lists=/tmp/apt/lists -o Dir::Cache=/tmp/apt/cache \
+    -o Acquire::https::Verify-Peer=false -o Acquire::https::Verify-Host=false \
+    update >/dev/null 2>&1 || true
+  apt-get -o Dir::State::Lists=/tmp/apt/lists -o Dir::State=/tmp/apt/state \
+    -o Dir::Cache=/tmp/apt/cache -o APT::Get::Download-Only=true \
+    -o Debug::NoLocking=true -y install fonts-dejavu-core >/dev/null 2>&1 || true
+  for d in /tmp/apt/cache/archives/fonts-dejavu*.deb; do
+    [ -f "$d" ] && dpkg-deb -x "$d" "$FONTROOT" 2>/dev/null || true
+  done
+fi
+cat > /tmp/fonts.conf <<'FCEOF'
+<?xml version="1.0"?>
+<!DOCTYPE fontconfig SYSTEM "fonts.dtd">
+<fontconfig>
+  <dir>/tmp/fontsroot/usr/share/fonts</dir>
+  <cachedir>/tmp/fontcache</cachedir>
+</fontconfig>
+FCEOF
+echo "   export FONTCONFIG_FILE=/tmp/fonts.conf"
+
 # Fetch the Web Dashers source for offline inspection.
 if [ ! -d /tmp/wd ]; then
   echo "== fetching web dashers source =="
