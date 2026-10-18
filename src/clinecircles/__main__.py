@@ -15,7 +15,7 @@ import sys
 
 from . import __version__
 from .layout import build_level
-from .serialization import build_level_string, write_gmd
+from .serialization import (build_level_string, read_gdlvl, write_gmd)
 from .validate import validate_level
 
 OUT_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "out")
@@ -110,9 +110,51 @@ def cmd_build(args: argparse.Namespace) -> int:
     return 0 if rep.ok else 1
 
 
+
+
+# Song: "THE FLAMES OF FATE" - m1ndbreaker. Newgrounds id 1377561.
+# UNVERIFIED from this sandbox: Newgrounds, GDBrowser and the GD song API are
+# all blocked here, so the id could not be re-confirmed. It is a single
+# constant so it can be corrected without touching anything else.
+SONG_ID_FLAMES_OF_FATE = 1377561
+
+
+def cmd_anticline(args: argparse.Namespace) -> int:
+    from .anticline_deco import build_anticline
+    from .serialization import build_gdlvl, build_gmd, write_gdlvl
+
+    res, level = build_anticline()
+    level.song_id = SONG_ID_FLAMES_OF_FATE
+    outdir = version_dir(args.version)
+
+    rep = validate_level(level)
+    print(f"ANTICLINE CIRCLES | {len(level.objects)} objects "
+          f"| {res.length_blocks:.0f} blocks | {res.track.time_at_bar(44):.1f}s")
+    print(rep.render())
+
+    gdlvl_path = os.path.join(outdir, "Anticline Circles.gdlvl")
+    write_gdlvl(level, gdlvl_path)
+    gmd_path = os.path.join(outdir, "Anticline Circles.gmd")
+    with open(gmd_path, "w", encoding="utf-8") as fh:
+        fh.write(build_gmd(level))
+    with open(os.path.join(outdir, "Anticline Circles.levelstring.txt"), "w") as fh:
+        fh.write(build_level_string(level))
+
+    # verify the .gdlvl we just wrote by reading it back
+    back = read_gdlvl(gdlvl_path)
+    ok = (back.name == level.name and len(back.objects) == len(level.objects)
+          and back.song_id == level.song_id)
+    print(f"  .gdlvl round-trip: {'OK' if ok else 'FAILED'} "
+          f"({len(back.objects)} objects, name={back.name!r}, "
+          f"song={back.song_id})")
+    print("  wrote " + gdlvl_path)
+    print("  wrote " + gmd_path)
+    return 0 if (rep.ok and ok) else 1
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(prog="clinecircles")
-    ap.add_argument("command", choices=["build", "info"])
+    ap.add_argument("command", choices=["build", "info", "anticline"])
     ap.add_argument("--version", default="v1", help="output folder under out/")
     ap.add_argument("--layout-only", action="store_true",
                     help="skip decoration and effects (Phase A only)")
@@ -121,7 +163,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--optimize", action="store_true",
                     help="run the performance pass")
     args = ap.parse_args(argv)
-    return {"build": cmd_build, "info": cmd_info}[args.command](args)
+    return {"build": cmd_build, "info": cmd_info,
+            "anticline": cmd_anticline}[args.command](args)
 
 
 if __name__ == "__main__":

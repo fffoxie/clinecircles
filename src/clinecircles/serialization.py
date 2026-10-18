@@ -196,3 +196,39 @@ def read_gmd(path: str) -> Level:
         return parse_gmd(fh.read())
 
     return zlib.decompress(base64.urlsafe_b64decode(s.encode()), 15 | 32).decode()
+
+
+# --------------------------------------------------------------------------
+# .gdlvl container (GD 2.2.09+ local level file)
+# --------------------------------------------------------------------------
+# The outer representation is the WHOLE plist XML, gzip-compressed and then
+# Base64-encoded.  decode = base64 -> gunzip -> xml.
+# (Contrast: .gmd leaves the XML in the clear and compresses only k4.)
+
+
+def build_gdlvl(level: Level, *, object_count: int | None = None) -> str:
+    """Serialise a Level to a .gdlvl string: base64(gzip(xml))."""
+    xml = build_gmd(level, object_count=object_count)
+    return base64.b64encode(gzip.compress(xml.encode("utf-8"), mtime=0)).decode()
+
+
+def parse_gdlvl(data: str) -> Level:
+    """Parse a .gdlvl string back into a Level."""
+    raw = data.strip()
+    # accept standard or urlsafe alphabet, and missing padding
+    raw = raw.replace("-", "+").replace("_", "/")
+    raw += "=" * (-len(raw) % 4)
+    xml = gzip.decompress(base64.b64decode(raw)).decode("utf-8")
+    return parse_gmd(xml)
+
+
+def write_gdlvl(level: Level, path: str) -> str:
+    doc = build_gdlvl(level)
+    with open(path, "w", encoding="ascii") as fh:
+        fh.write(doc)
+    return doc
+
+
+def read_gdlvl(path: str) -> Level:
+    with open(path, "r", encoding="ascii") as fh:
+        return parse_gdlvl(fh.read())
