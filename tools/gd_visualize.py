@@ -232,7 +232,7 @@ def render(level, engine: dict, x0: float, x1: float, pxu: float,
             continue
         ch = o.get(21) or d.get("default_base_color_channel")
         rgb = colors.get(int(ch)) if ch else None
-        if rgb and d.get("can_color", True):
+        if rgb:
             img = tint(img, rgb)
         px = int((o.x - x0) * pxu - img.width / 2)
         py = int(H - (o.y - y0) * pxu - img.height / 2)

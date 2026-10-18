@@ -120,10 +120,10 @@ SONG_ID_FLAMES_OF_FATE = 1377561
 
 
 def cmd_anticline(args: argparse.Namespace) -> int:
-    from .anticline_deco import build_anticline
+    from .anticline_build import assemble
     from .serialization import build_gdlvl, build_gmd, write_gdlvl
 
-    res, level = build_anticline()
+    res, level = assemble()
     level.song_id = SONG_ID_FLAMES_OF_FATE
     outdir = version_dir(args.version)
 
